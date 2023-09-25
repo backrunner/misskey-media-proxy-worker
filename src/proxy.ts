@@ -38,7 +38,7 @@ export const proxyImage = async (url: string) => {
 
 	const res = new Response(fetchRes.body, {
 		headers: {
-			...fetchRes.headers,
+			...Object.fromEntries(fetchRes.headers.entries()),
 			...GENERAL_CORS_HEADERS,
 			'Cache-Control': 'public, immutable, s-maxage=31536000, max-age=31536000, stale-while-revalidate=60',
 			'Content-Security-Policy': `default-src 'none'; img-src 'self'; media-src 'self'; style-src 'unsafe-inline'`,
