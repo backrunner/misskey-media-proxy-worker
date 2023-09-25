@@ -26,7 +26,8 @@ export const proxyImage = async (url: string) => {
 		},
 	});
 
-	if (!fetchRes.headers.get('Content-Type')?.startsWith('image')) {
+	const contentType = fetchRes.headers.get('Content-Type');
+	if (!contentType?.startsWith('image') || !contentType.startsWith('video') || !contentType.startsWith('audio') || contentType !== 'application/octet-stream') {
 		return createErrorResponse(400, 'Invalid proxy target.');
 	}
 
