@@ -1,6 +1,6 @@
-import { PROXY_CONFIG } from "./config";
-import { GENERAL_CORS_HEADERS } from "./constants";
-import { createErrorResponse } from "./response";
+import { PROXY_CONFIG } from './config';
+import { GENERAL_CORS_HEADERS } from './constants';
+import { createErrorResponse } from './response';
 
 const DEFAULT_USER_AGENT = 'misskey-image-proxy-worker';
 
@@ -22,12 +22,17 @@ export const proxyImage = async (url: string) => {
 		headers: {
 			'User-Agent': PROXY_CONFIG.PROXY_USER_AGENT || DEFAULT_USER_AGENT,
 			'Accept-Encoding': 'gzip, deflate, br',
-			'Accept': 'image/webp,image/apng,image/svg+xml,image/*,*/*;q=0.8',
+			Accept: 'image/webp,image/apng,image/svg+xml,image/*,*/*;q=0.8',
 		},
 	});
 
 	const contentType = fetchRes.headers.get('Content-Type');
-	if (!contentType?.startsWith('image') || !contentType.startsWith('video') || !contentType.startsWith('audio') || contentType !== 'application/octet-stream') {
+	if (
+		!contentType?.startsWith('image') &&
+		!contentType?.startsWith('video') &&
+		!contentType?.startsWith('audio') &&
+		contentType !== 'application/octet-stream'
+	) {
 		return createErrorResponse(400, 'Invalid proxy target.');
 	}
 
