@@ -37,12 +37,12 @@ export default {
 			return createErrorResponse(405, 'Unsupported request method.');
 		}
 
-		if (!(request.headers.get('referer') || '').startsWith(PROXY_CONFIG.ALLOW_ORIGIN)) {
-			return createErrorResponse(400, 'Invalid request.');
-		}
+		const userAgent = request.headers.get('User-Agent');
+		const isClient = ['Kimis'].some((id) => userAgent?.startsWith(id));
 
 		try {
 			const url = new URL(request.url);
+
 			if (!url.pathname.startsWith('/proxy')) {
 				return createErrorResponse(404, 'Invalid request.');
 			}
@@ -50,9 +50,14 @@ export default {
 			if (!target) {
 				return createErrorResponse(400, 'Invalid proxy target.');
 			}
-			const sign = url.searchParams.get('sign');
-			if (sign !== await getSign(target)) {
-				return createErrorResponse(400, 'Invalid proxy request.');
+			if (!isClient) {
+				if (!(request.headers.get('Referer') || '').startsWith(PROXY_CONFIG.ALLOW_ORIGIN)) {
+					return createErrorResponse(400, 'Invalid request.');
+				}
+				const sign = url.searchParams.get('sign');
+				if (sign !== await getSign(target)) {
+					return createErrorResponse(400, 'Invalid proxy request.');
+				}
 			}
 			const targetURL = decodeURIComponent(target);
 			return proxyImage(targetURL);
