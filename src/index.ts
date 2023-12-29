@@ -51,7 +51,7 @@ export default {
 				return createErrorResponse(400, 'Invalid proxy target.');
 			}
 			if (!isClient) {
-				if (!(request.headers.get('Referer') || '').startsWith(PROXY_CONFIG.ALLOW_ORIGIN)) {
+				if (PROXY_CONFIG.VALIDATE_REFERER && !(request.headers.get('Referer') || '').startsWith(PROXY_CONFIG.ALLOW_ORIGIN)) {
 					return createErrorResponse(400, 'Invalid request.');
 				}
 				if (PROXY_CONFIG.VALIDATE_SIGN) {

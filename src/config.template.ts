@@ -4,4 +4,5 @@ export const PROXY_CONFIG = {
 	PROXY_KEY: '',
 	VALIDATE_PATHNAME: true,
 	VALIDATE_SIGN: false,
+	VALIDATE_REFERER: false,
 }
