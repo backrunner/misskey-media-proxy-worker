@@ -43,7 +43,7 @@ export default {
 		try {
 			const url = new URL(request.url);
 
-			if (!url.pathname.startsWith('/proxy')) {
+			if (PROXY_CONFIG.VALIDATE_PATHNAME && !url.pathname.startsWith('/proxy')) {
 				return createErrorResponse(404, 'Invalid request.');
 			}
 			const target = url.searchParams.get('url');
@@ -54,9 +54,11 @@ export default {
 				if (!(request.headers.get('Referer') || '').startsWith(PROXY_CONFIG.ALLOW_ORIGIN)) {
 					return createErrorResponse(400, 'Invalid request.');
 				}
-				const sign = url.searchParams.get('sign');
-				if (sign !== await getSign(target)) {
-					return createErrorResponse(400, 'Invalid proxy request.');
+				if (PROXY_CONFIG.VALIDATE_SIGN) {
+					const sign = url.searchParams.get('sign');
+					if (sign !== await getSign(target)) {
+						return createErrorResponse(400, 'Invalid proxy request.');
+					}
 				}
 			}
 			const targetURL = decodeURIComponent(target);
