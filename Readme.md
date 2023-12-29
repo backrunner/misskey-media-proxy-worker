@@ -28,7 +28,7 @@ export const PROXY_CONFIG = {
  VALIDATE_PATHNAME: true,
  // Will validate the signature of the request if set to `true`.
  VALIDATE_SIGN: true,
- // Will validate the referer with the value of ALLOW_ORIGIN if set to `true`.
+ // Will validate the referer with the value of ALLOW_ORIGIN if set to `true`, not compatible with some third party clients.
  VALIDATE_REFERER: true,
 }
 ```
