@@ -30,6 +30,8 @@ export const PROXY_CONFIG = {
  VALIDATE_SIGN: true,
  // Will validate the referer with the value of ALLOW_ORIGIN if set to `true`, not compatible with some third party clients.
  VALIDATE_REFERER: true,
+ // Bypass validations for third party clients, set the keyword in user agent to the bellowing array.
+ THIRD_PARTY_CLIENTS_USER_AGENT: [],
 }
 ```
 

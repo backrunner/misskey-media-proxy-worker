@@ -40,7 +40,7 @@ export default {
 		}
 
 		const userAgent = request.headers.get('User-Agent');
-		const isClient = ['Kimis'].some((id) => userAgent?.startsWith(id));
+		const isClient = ['Kimis', ...(PROXY_CONFIG.THIRD_PARTY_CLIENTS_USER_AGENT || [])].some((id) => userAgent?.includes(id));
 
 		try {
 			const url = new URL(request.url);
