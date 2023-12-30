@@ -1,5 +1,6 @@
 import { PROXY_CONFIG } from "./config";
 import { GENERAL_CORS_HEADERS } from "./constants";
+import { getCorsHeader } from "./headers";
 import { proxyImage } from "./proxy";
 import { createErrorResponse } from "./response";
 import { getSign } from "./sign";
@@ -22,6 +23,7 @@ const handleOptions = (request: Request) => {
 	return new Response(null, {
 		headers: {
 			...GENERAL_CORS_HEADERS,
+			...getCorsHeader(request),
 			'Access-Control-Allow-Headers': accessControlRequestHeaders!,
 		}
 	});
