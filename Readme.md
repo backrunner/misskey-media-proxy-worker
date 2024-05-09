@@ -16,6 +16,8 @@ A media files proxy worker for [Misskey](https://github.com/misskey-dev/misskey)
 
 ## Config
 
+`src/config/config.ts`
+
 ```ts
 export const PROXY_CONFIG = {
  // The origin of your misskey instance
@@ -32,6 +34,8 @@ export const PROXY_CONFIG = {
  VALIDATE_REFERER: true,
  // Bypass validations for third party clients, set the keyword in user agent to the bellowing array.
  THIRD_PARTY_CLIENTS_USER_AGENT: [],
+ // If proxy failed, return an empty PNG image.
+ RETURN_EMPTY_PIC_WHEN_ERROR: false,
 }
 ```
 

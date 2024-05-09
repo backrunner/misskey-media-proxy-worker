@@ -6,4 +6,5 @@ export const PROXY_CONFIG = {
 	VALIDATE_PATHNAME: true,
 	VALIDATE_SIGN: false,
 	VALIDATE_REFERER: false,
+	RETURN_EMPTY_PIC_WHEN_ERROR: false,
 }

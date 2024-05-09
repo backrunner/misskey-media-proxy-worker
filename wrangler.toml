@@ -6,7 +6,7 @@ compatibility_date = "2023-09-18"
 # Note: Use secrets to store sensitive data.
 # Docs: https://developers.cloudflare.com/workers/platform/environment-variables
 # [vars]
-# MY_VARIABLE = "production_value"
+# RETURN_EMPTY_PIC = true
 
 # Bind a KV Namespace. Use KV as persistent storage for small key-value pairs.
 # Docs: https://developers.cloudflare.com/workers/runtime-apis/kv

@@ -1,4 +1,4 @@
-import { PROXY_CONFIG } from "./config";
+import { PROXY_CONFIG } from "../config/config";
 
 export const getCorsHeader = (request: Request) => {
 	if (Array.isArray(PROXY_CONFIG.ALLOW_ORIGIN)) {
