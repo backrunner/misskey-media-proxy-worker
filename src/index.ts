@@ -38,6 +38,15 @@ export default {
 		}
 
 		const userAgent = request.headers.get('User-Agent');
+
+		if (!userAgent) {
+			return createErrorResponse(400, 'Invalid headers.');
+		}
+
+		if (/NetcraftSurveyAgent|(netcraft\.com)/.test(userAgent)) {
+			return createErrorResponse(403, 'Forbidden.');
+		}
+
 		const isClient = ['Kimis', ...(PROXY_CONFIG.THIRD_PARTY_CLIENTS_USER_AGENT || [])].some((id) => userAgent?.includes(id));
 
 		try {
