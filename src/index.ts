@@ -47,7 +47,7 @@ export default {
 			return createErrorResponse(403, 'Forbidden.');
 		}
 
-		const isClient = ['Kimis', ...(PROXY_CONFIG.THIRD_PARTY_CLIENTS_USER_AGENT || [])].some((id) => userAgent?.includes(id));
+		const isClient = (PROXY_CONFIG.THIRD_PARTY_CLIENTS_USER_AGENT || []).some((id) => userAgent?.includes(id));
 
 		try {
 			const url = new URL(request.url);
