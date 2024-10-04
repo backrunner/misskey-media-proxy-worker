@@ -15,16 +15,28 @@ export const proxyImage = async (url: string, request: Request) => {
 	}
 
 	const fetchRes = await fetch(url, {
+		// only available when the account enabled Cloudflare Images
 		cf: {
 			polish: 'lossy',
 			cacheKey: url,
 		},
 		headers: {
-			'User-Agent': PROXY_CONFIG.PROXY_USER_AGENT || DEFAULT_USER_AGENT,
 			'Accept-Encoding': 'gzip, deflate, br',
 			Accept: 'image/avif,image/webp,image/apng,image/svg+xml,image/*,*/*;q=0.8',
+			...request.headers,
+			'User-Agent': PROXY_CONFIG.PROXY_USER_AGENT || request.headers.get('User-Agent') || DEFAULT_USER_AGENT,
 		},
 	});
+
+	if (!fetchRes?.ok) {
+		console.error(`Failed to fetch ${url}:`, fetchRes);
+		return createErrorResponse(500, 'Failed to fetch target file.');
+	}
+
+	const contentLength = fetchRes.headers.get('Content-Length')
+	if (contentLength !== null && PROXY_CONFIG.MAX_CONTENT_LENGTH && Number(contentLength) > PROXY_CONFIG.MAX_CONTENT_LENGTH) {
+		return createErrorResponse(403, 'The response content length is too big.');
+	}
 
 	const contentType = fetchRes.headers.get('Content-Type');
 	if (!/^(((image|video|audio)\/)|(application\/octet-stream))/.test(contentType || '')) {

@@ -4,9 +4,8 @@ A media files proxy worker for [Misskey](https://github.com/misskey-dev/misskey)
 
 ## Usage
 
-1. Copy `./src/config.template.ts` to `./src/config.ts`.
-2. Modify the `config.ts` file.
-3. Run `npm run deploy` to deploy your worker.
+1. Set your config items via environment variables in the ".env"
+2. Run `npm run deploy` to deploy your worker.
 
 ## Features
 
@@ -17,6 +16,8 @@ A media files proxy worker for [Misskey](https://github.com/misskey-dev/misskey)
 ## Config
 
 `src/config/config.ts`
+
+(Also available with the same key in the environment variables)
 
 ```ts
 export const PROXY_CONFIG = {
