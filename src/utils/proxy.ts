@@ -30,7 +30,13 @@ export const proxyImage = async (url: string, request: Request) => {
 	});
 
 	if (!fetchRes?.ok) {
-		console.error(`Failed to fetch ${url}:`, fetchRes.status, fetchRes.statusText, JSON.stringify(PROXY_CONFIG));
+		let fetchBody = '';
+		try {
+			fetchBody = await fetchRes.text();
+		} catch (error) {
+			fetchBody = '';
+		}
+		console.error(`Failed to fetch ${url}:`, fetchRes.status, fetchRes.statusText, JSON.stringify(PROXY_CONFIG), fetchBody);
 		return createErrorResponse(500, 'Failed to fetch target file.', request);
 	}
 
