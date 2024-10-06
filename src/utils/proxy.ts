@@ -1,6 +1,6 @@
 import { PROXY_CONFIG } from '../config/config';
 import { GENERAL_CORS_HEADERS } from '../constants';
-import { createEmptyPicResponse, createErrorResponse } from './response';
+import { createErrorResponse } from './response';
 
 const DEFAULT_USER_AGENT = 'misskey-image-proxy-worker';
 
