@@ -2,6 +2,7 @@ import { env } from 'node:process';
 
 export const PROXY_CONFIG = {
 	ALLOW_ORIGIN: env.ALLOW_ORIGIN ?? '',
+	BLACK_LIST_DOMAIN: env.BLACK_LIST_DOMAIN ? (env.BLACK_LIST_DOMAIN || '').split(',').map((item) => item.trim()) : [],
 	PROXY_USER_AGENT: env.PROXY_USER_AGENT ?? '',
 	PROXY_KEY: env.PROXY_KEY ?? '',
 	THIRD_PARTY_CLIENTS_USER_AGENT: env.THIRD_PARTY_CLIENTS_USER_AGENT ? (env.THIRD_PARTY_CLIENTS_USER_AGENT || '').split(',').map((item) => item.trim()) : [],

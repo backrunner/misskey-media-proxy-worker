@@ -43,10 +43,6 @@ export default {
 			return createErrorResponse(400, 'Invalid headers.');
 		}
 
-		if (/NetcraftSurveyAgent|(netcraft\.com)/.test(userAgent)) {
-			return createErrorResponse(403, 'Forbidden.');
-		}
-
 		const isClient = (PROXY_CONFIG.THIRD_PARTY_CLIENTS_USER_AGENT || []).some((id) => userAgent?.includes(id));
 
 		try {
@@ -74,6 +70,10 @@ export default {
 			}
 
 			const targetURL = decodeURIComponent(target);
+
+			if (Array.isArray(PROXY_CONFIG.BLACK_LIST_DOMAIN) && PROXY_CONFIG.BLACK_LIST_DOMAIN.some((domain) => targetURL.includes(domain))) {
+				return createErrorResponse(403, 'Forbidden.');
+			}
 
 			try {
 				return await proxyImage(targetURL, request);
