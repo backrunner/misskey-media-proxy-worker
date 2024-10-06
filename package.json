@@ -4,7 +4,7 @@
   "scripts": {
     "deploy": "wrangler deploy",
     "start": "wrangler dev",
-    "types": "wrangler types --experimental-include-runtime"
+    "types": "wrangler types"
   },
   "devDependencies": {
     "@cloudflare/workers-types": "^4.20241004.0",

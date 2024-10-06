@@ -1,8 +1,8 @@
-import { PROXY_CONFIG } from './config/config';
+import { PROXY_CONFIG, updateProxyConfig } from './config/config';
 import { GENERAL_CORS_HEADERS } from './constants';
 import { getCorsHeader } from './utils/headers';
 import { proxyImage } from './utils/proxy';
-import { createEmptyPicResponse, createErrorResponse } from './utils/response';
+import { createErrorResponse } from './utils/response';
 import { getSign } from './utils/sign';
 import { isNullable } from './utils/misc';
 
@@ -29,6 +29,8 @@ const handleOptions = (request: Request) => {
 
 export default {
 	async fetch(request: Request, env: Env, ctx: ExecutionContext): Promise<Response> {
+		updateProxyConfig(env);
+
 		if (request.method === 'OPTIONS') {
 			return handleOptions(request);
 		}
