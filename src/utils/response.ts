@@ -1,8 +1,12 @@
+import { PROXY_CONFIG } from '../config/config';
 import { GENERAL_CORS_HEADERS, MIN_PNG_BASE64 } from '../constants';
 import { getCorsHeader } from './headers';
 
-export const createErrorResponse = (status: number, errorMessage: string) =>
-	new Response(
+export const createErrorResponse = (status: number, errorMessage: string, request: Request) => {
+	if (PROXY_CONFIG.RETURN_EMPTY_PIC_WHEN_ERROR) {
+		return createEmptyPicResponse(request, errorMessage);
+	}
+	return new Response(
 		JSON.stringify({
 			err_code: status,
 			err_msg: errorMessage,
@@ -10,13 +14,15 @@ export const createErrorResponse = (status: number, errorMessage: string) =>
 		{
 			headers: {
 				...GENERAL_CORS_HEADERS,
+				...getCorsHeader(request),
 				'Content-Type': 'applicaton/json',
 			},
 			status,
 		}
 	);
+}
 
-export const createEmptyPicResponse = (request: Request) => {
+export const createEmptyPicResponse = (request: Request, errorMessage: string) => {
 	return new Response(
 		Uint8Array.from(atob(MIN_PNG_BASE64), function (char) {
 			return char.charCodeAt(0);
@@ -26,6 +32,7 @@ export const createEmptyPicResponse = (request: Request) => {
 				...GENERAL_CORS_HEADERS,
 				...getCorsHeader(request),
 				'Content-Type': 'image/png',
+				'X-Error-Message': errorMessage,
 			},
 		}
 	);

@@ -6,7 +6,7 @@ const DEFAULT_USER_AGENT = 'misskey-image-proxy-worker';
 
 export const proxyImage = async (url: string, request: Request) => {
 	if (!url) {
-		return createErrorResponse(400, 'Invalid proxy url.');
+		return createErrorResponse(400, 'Invalid proxy url.', request);
 	}
 
 	const cached = await caches.default.match(request);
@@ -30,24 +30,21 @@ export const proxyImage = async (url: string, request: Request) => {
 
 	if (!fetchRes?.ok) {
 		console.error(`Failed to fetch ${url}:`, fetchRes);
-		return createErrorResponse(500, 'Failed to fetch target file.');
+		return createErrorResponse(500, 'Failed to fetch target file.', request);
 	}
 
 	const contentLength = fetchRes.headers.get('Content-Length')
 	if (contentLength !== null && PROXY_CONFIG.MAX_CONTENT_LENGTH && Number(contentLength) > PROXY_CONFIG.MAX_CONTENT_LENGTH) {
-		return createErrorResponse(403, 'The response content length is too big.');
+		return createErrorResponse(403, 'The response content length is too big.', request);
 	}
 
 	const contentType = fetchRes.headers.get('Content-Type');
 	if (!/^(((image|video|audio)\/)|(application\/octet-stream))/.test(contentType || '')) {
-		if (PROXY_CONFIG.RETURN_EMPTY_PIC_WHEN_ERROR) {
-			return createEmptyPicResponse(request);
-		}
-		return createErrorResponse(500, 'Invalid returned content type.');
+		return createErrorResponse(500, 'Invalid returned content type.', request);
 	}
 
 	if (!fetchRes.body) {
-		return createErrorResponse(500, 'Failed to fetch target file.');
+		return createErrorResponse(500, 'Failed to fetch target file.', request);
 	}
 
 	const res = new Response(fetchRes.body as ReadableStream<Uint8Array>, {
