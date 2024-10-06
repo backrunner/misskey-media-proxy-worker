@@ -46,7 +46,11 @@ export const proxyImage = async (url: string, request: Request) => {
 		return createErrorResponse(500, 'Invalid returned content type.');
 	}
 
-	const res = new Response(fetchRes.body, {
+	if (!fetchRes.body) {
+		return createErrorResponse(500, 'Failed to fetch target file.');
+	}
+
+	const res = new Response(fetchRes.body as ReadableStream<Uint8Array>, {
 		headers: {
 			...Object.fromEntries(fetchRes.headers.entries()),
 			...GENERAL_CORS_HEADERS,
