@@ -34,13 +34,13 @@ export default {
 		}
 
 		if (request.method !== 'GET') {
-			return createErrorResponse(405, 'Unsupported request method.');
+			return createErrorResponse(405, 'Unsupported request method.', request);
 		}
 
 		const userAgent = request.headers.get('User-Agent');
 
 		if (!userAgent) {
-			return createErrorResponse(400, 'Invalid headers.');
+			return createErrorResponse(400, 'Invalid headers.', request);
 		}
 
 		const isClient = (PROXY_CONFIG.THIRD_PARTY_CLIENTS_USER_AGENT || []).some((id) => userAgent?.includes(id));
@@ -49,22 +49,22 @@ export default {
 			const url = new URL(request.url);
 
 			if (PROXY_CONFIG.VALIDATE_PATHNAME && !url.pathname.startsWith('/proxy')) {
-				return createErrorResponse(404, 'Invalid request.');
+				return createErrorResponse(404, 'Invalid request.', request);
 			}
 
 			const target = url.searchParams.get('url');
 			if (!target) {
-				return createErrorResponse(400, 'Invalid proxy target.');
+				return createErrorResponse(400, 'Invalid proxy target.', request);
 			}
 
 			if (!isClient) {
 				if (PROXY_CONFIG.VALIDATE_REFERER && !(request.headers.get('Referer') || '').startsWith(PROXY_CONFIG.ALLOW_ORIGIN)) {
-					return createErrorResponse(400, 'Invalid request.');
+					return createErrorResponse(400, 'Invalid request.', request);
 				}
 				if (PROXY_CONFIG.VALIDATE_SIGN) {
 					const sign = url.searchParams.get('sign');
 					if (sign !== (await getSign(target))) {
-						return createErrorResponse(400, 'Invalid proxy request.');
+						return createErrorResponse(400, 'Invalid proxy request.', request);
 					}
 				}
 			}
@@ -72,20 +72,20 @@ export default {
 			const targetURL = decodeURIComponent(target);
 
 			if (Array.isArray(PROXY_CONFIG.BLACK_LIST_DOMAIN) && PROXY_CONFIG.BLACK_LIST_DOMAIN.some((domain) => targetURL.includes(domain))) {
-				return createErrorResponse(403, 'Forbidden.');
+				return createErrorResponse(403, 'Forbidden.', request);
 			}
 
 			try {
 				return await proxyImage(targetURL, request);
 			} catch (error) {
 				if (PROXY_CONFIG.RETURN_EMPTY_PIC_WHEN_ERROR) {
-					return createEmptyPicResponse(request);
+					return createEmptyPicResponse(request, (error as Error).message);
 				} else {
 					throw error;
 				}
 			}
 		} catch (error) {
-			return createErrorResponse(500, (error as Error).message);
+			return createErrorResponse(500, (error as Error).message, request);
 		}
 	},
 };
