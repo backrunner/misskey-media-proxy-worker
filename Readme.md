@@ -4,9 +4,8 @@ A media files proxy worker for [Misskey](https://github.com/misskey-dev/misskey)
 
 ## Usage
 
-1. Copy `./src/config.template.ts` to `./src/config.ts`.
-2. Modify the `config.ts` file.
-3. Run `npm run deploy` to deploy your worker.
+1. Set your config items via environment variables in the ".env"
+2. Run `npm run deploy` to deploy your worker.
 
 ## Features
 
@@ -16,27 +15,24 @@ A media files proxy worker for [Misskey](https://github.com/misskey-dev/misskey)
 
 ## Config
 
-`src/config/config.ts`
+Please use the environment variable to configure the proxy, you can configure them at Cloudflare's dashboard or in the `wrangler.toml` file.
 
-```ts
-export const PROXY_CONFIG = {
- // The origin of your misskey instance
- ALLOW_ORIGIN: 'https://pwp.space',
- // The user agent header for proxy requests
- PROXY_USER_AGENT: 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/119.0.0.0 Safari/537.36 Edg/119.0.2109.1',
- // ⚠ NOT COMPATIBLE WITH THE OFFICIAL INSTANCE, it's only compatible with the code in this fork: https://github.com/backrunner/misskey/tree/feature/image-proxy-sign
- PROXY_KEY: '',
- // Will validate if the pathname is started with '/proxy' if set to `true`, for security reason, the default option is true.
- VALIDATE_PATHNAME: true,
- // Will validate the signature of the request if set to `true`.
- VALIDATE_SIGN: true,
- // Will validate the referer with the value of ALLOW_ORIGIN if set to `true`, not compatible with some third party clients.
- VALIDATE_REFERER: true,
- // Bypass validations for third party clients, set the keyword in user agent to the bellowing array.
- THIRD_PARTY_CLIENTS_USER_AGENT: [],
- // If proxy failed, return an empty PNG image.
- RETURN_EMPTY_PIC_WHEN_ERROR: false,
-}
+```toml
+[vars]
+ALLOW_ORIGIN = "https://pwp.space"
+PROXY_USER_AGENT = "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/119.0.0.0 Safari/537.36 Edg/119.0.2109.1"
+THIRD_PARTY_CLIENTS_USER_AGENT = ""
+VALIDATE_PATHNAME = true
+VALIDATE_SIGN = false
+VALIDATE_REFERER = false
+RETURN_EMPTY_PIC_WHEN_ERROR = false
+BLACK_LIST_DOMAIN = ""
+```
+
+To set the `PROXY_KEY`, you can use the `wrangler secret put` command.
+
+```bash
+wrangler secret put PROXY_KEY [YOUR_PROXY_KEY]
 ```
 
 ## Why proxy requests need a proxy key and signature?
