@@ -1,5 +1,9 @@
 # CHANGELOG
 
+## 0.3.1
+
+- feat: expose body of proxy fetch in the error log
+
 ## 0.3.0
 
 - breaking: support config worker by environment variables
