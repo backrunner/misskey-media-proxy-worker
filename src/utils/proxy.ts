@@ -16,6 +16,7 @@ export const proxyImage = async (url: string, request: Request) => {
 
 	const fetchRes = await fetch(url, {
 		// only available when the account enabled Cloudflare Images
+		method: request.method,
 		cf: {
 			polish: 'lossy',
 			cacheKey: url,
@@ -33,14 +34,27 @@ export const proxyImage = async (url: string, request: Request) => {
 		return createErrorResponse(500, 'Failed to fetch target file.', request);
 	}
 
-	const contentLength = fetchRes.headers.get('Content-Length')
-	if (contentLength !== null && PROXY_CONFIG.MAX_CONTENT_LENGTH && Number(contentLength) > PROXY_CONFIG.MAX_CONTENT_LENGTH) {
-		return createErrorResponse(403, 'The response content length is too big.', request);
+	if (request.method !== 'HEAD') {
+		const contentLength = fetchRes.headers.get('Content-Length')
+		if (contentLength !== null && PROXY_CONFIG.MAX_CONTENT_LENGTH && Number(contentLength) > PROXY_CONFIG.MAX_CONTENT_LENGTH) {
+			return createErrorResponse(403, 'The response content length is too big.', request);
+		}
 	}
 
 	const contentType = fetchRes.headers.get('Content-Type');
 	if (!/^(((image|video|audio)\/)|(application\/octet-stream))/.test(contentType || '')) {
 		return createErrorResponse(500, 'Invalid returned content type.', request);
+	}
+
+	if (request.method === 'HEAD') {
+		return new Response(null, {
+			headers: {
+				...Object.fromEntries(fetchRes.headers.entries()),
+				...GENERAL_CORS_HEADERS,
+				'Cache-Control': 'public, immutable, s-maxage=31536000, max-age=31536000, stale-while-revalidate=60',
+				'Content-Security-Policy': `default-src 'none'; img-src 'self'; media-src 'self'; style-src 'unsafe-inline'`,
+			},
+		});
 	}
 
 	if (!fetchRes.body) {

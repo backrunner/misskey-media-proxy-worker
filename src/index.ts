@@ -33,7 +33,7 @@ export default {
 			return handleOptions(request);
 		}
 
-		if (request.method !== 'GET') {
+		if (!['GET', 'HEAD'].includes(request.method)) {
 			return createErrorResponse(405, 'Unsupported request method.', request);
 		}
 
@@ -78,11 +78,7 @@ export default {
 			try {
 				return await proxyImage(targetURL, request);
 			} catch (error) {
-				if (PROXY_CONFIG.RETURN_EMPTY_PIC_WHEN_ERROR) {
-					return createEmptyPicResponse(request, (error as Error).message);
-				} else {
-					throw error;
-				}
+				throw error;
 			}
 		} catch (error) {
 			return createErrorResponse(500, (error as Error).message, request);
