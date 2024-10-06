@@ -2,3 +2,13 @@ name = "misskey-media-proxy-worker"
 main = "src/index.ts"
 compatibility_date = "2023-09-18"
 compatibility_flags = ["nodejs_compat"]
+
+[vars]
+ALLOW_ORIGIN = "https://pwp.space"
+PROXY_USER_AGENT = "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/119.0.0.0 Safari/537.36 Edg/119.0.2109.1"
+THIRD_PARTY_CLIENTS_USER_AGENT = ""
+VALIDATE_PATHNAME = true
+VALIDATE_SIGN = true
+VALIDATE_REFERER = true
+RETURN_EMPTY_PIC_WHEN_ERROR = true
+BLACK_LIST_DOMAIN = ""

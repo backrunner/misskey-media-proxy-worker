@@ -15,18 +15,24 @@ A media files proxy worker for [Misskey](https://github.com/misskey-dev/misskey)
 
 ## Config
 
-Please use the environment variable to configure the proxy.
+Please use the environment variable to configure the proxy, you can configure them at Cloudflare's dashboard or in the `wrangler.toml` file.
 
-```ini
-ALLOW_ORIGIN="https://pwp.space"
-PROXY_USER_AGENT="Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/119.0.0.0 Safari/537.36 Edg/119.0.2109.1"
-PROXY_KEY=""
-THIRD_PARTY_CLIENTS_USER_AGENT=""
-VALIDATE_PATHNAME=true
-VALIDATE_SIGN=false
-VALIDATE_REFERER=false
-RETURN_EMPTY_PIC_WHEN_ERROR=false
-BLACK_LIST_DOMAIN=""
+```toml
+[vars]
+ALLOW_ORIGIN = "https://pwp.space"
+PROXY_USER_AGENT = "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/119.0.0.0 Safari/537.36 Edg/119.0.2109.1"
+THIRD_PARTY_CLIENTS_USER_AGENT = ""
+VALIDATE_PATHNAME = true
+VALIDATE_SIGN = false
+VALIDATE_REFERER = false
+RETURN_EMPTY_PIC_WHEN_ERROR = false
+BLACK_LIST_DOMAIN = ""
+```
+
+To set the `PROXY_KEY`, you can use the `wrangler secret put` command.
+
+```bash
+wrangler secret put PROXY_KEY [YOUR_PROXY_KEY]
 ```
 
 ## Why proxy requests need a proxy key and signature?

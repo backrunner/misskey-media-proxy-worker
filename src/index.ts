@@ -70,13 +70,26 @@ export default {
 			}
 
 			const targetURL = decodeURIComponent(target);
+			
+			let finalTargetURL = '';
+
+			try {
+				const parsedTargetURL = new URL(targetURL);
+				if (!targetURL.includes(PROXY_CONFIG.ALLOW_ORIGIN) && parsedTargetURL.searchParams.has('sign')) {
+					// remote target url doesn't accept sign, remove it
+					parsedTargetURL.searchParams.delete('sign');
+				}
+				finalTargetURL = parsedTargetURL.toString();
+			} catch (error) {
+				return createErrorResponse(400, 'Invalid proxy target.', request);
+			}
 
 			if (Array.isArray(PROXY_CONFIG.BLACK_LIST_DOMAIN) && PROXY_CONFIG.BLACK_LIST_DOMAIN.some((domain) => targetURL.includes(domain))) {
 				return createErrorResponse(403, 'Forbidden.', request);
 			}
 
 			try {
-				return await proxyImage(targetURL, request);
+				return await proxyImage(finalTargetURL, request);
 			} catch (error) {
 				throw error;
 			}
