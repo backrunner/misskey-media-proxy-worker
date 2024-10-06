@@ -23,14 +23,14 @@ export const proxyImage = async (url: string, request: Request) => {
 		},
 		headers: {
 			'Accept-Encoding': 'gzip, deflate, br',
-			Accept: 'image/avif,image/webp,image/apng,image/svg+xml,image/*,*/*;q=0.8',
-			...request.headers,
+			Accept: request.headers.get('Accept') || 'image/avif,image/webp,image/apng,image/svg+xml,image/*,*/*;q=0.8',
 			'User-Agent': PROXY_CONFIG.PROXY_USER_AGENT || request.headers.get('User-Agent') || DEFAULT_USER_AGENT,
 		},
+		redirect: 'follow',
 	});
 
 	if (!fetchRes?.ok) {
-		console.error(`Failed to fetch ${url}:`, fetchRes);
+		console.error(`Failed to fetch ${url}:`, fetchRes.status, fetchRes.statusText);
 		return createErrorResponse(500, 'Failed to fetch target file.', request);
 	}
 
