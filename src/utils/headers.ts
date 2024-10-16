@@ -18,3 +18,16 @@ export const getCorsHeader = (request: Request) => {
 		}
 	}
 }
+
+export const getExtraHeaders = (targetUrl: string): Record<string, string> => {
+  const targetDomain = new URL(targetUrl).hostname;
+  const extraHeaders: Record<string, string> = {};
+
+  for (const [pattern, headers] of Object.entries(PROXY_CONFIG.EXTRA_PROXY_HEADERS)) {
+    if (targetDomain.match(new RegExp(pattern.replace(/\*/g, '.*')))) {
+      Object.assign(extraHeaders, headers);
+    }
+  }
+
+	return extraHeaders;
+};

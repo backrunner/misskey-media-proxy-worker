@@ -1,6 +1,7 @@
 import { PROXY_CONFIG } from '../config/config';
 import { GENERAL_CORS_HEADERS } from '../constants';
 import { createErrorResponse } from './response';
+import { getExtraHeaders } from './headers';
 
 const DEFAULT_USER_AGENT = 'misskey-image-proxy-worker';
 
@@ -14,6 +15,8 @@ export const proxyImage = async (url: string, request: Request) => {
 		return cached;
 	}
 
+	const extraHeaders = getExtraHeaders(url);
+
 	const fetchRes = await fetch(url, {
 		// only available when the account enabled Cloudflare Images
 		method: request.method,
@@ -25,6 +28,7 @@ export const proxyImage = async (url: string, request: Request) => {
 			'Accept-Encoding': 'gzip, deflate, br',
 			Accept: request.headers.get('Accept') || 'image/avif,image/webp,image/apng,image/svg+xml,image/*,*/*;q=0.8',
 			'User-Agent': PROXY_CONFIG.PROXY_USER_AGENT || request.headers.get('User-Agent') || DEFAULT_USER_AGENT,
+			...extraHeaders, // 添加额外的头部
 		},
 		redirect: 'follow',
 	});
