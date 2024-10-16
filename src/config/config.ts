@@ -11,6 +11,7 @@ export const PROXY_CONFIG: Env & {
 	VALIDATE_REFERER: false,
 	RETURN_EMPTY_PIC_WHEN_ERROR: false,
 	MAX_CONTENT_LENGTH: 0,
+	CACHE_MAX_AGE: 31536000,
 	EXTRA_PROXY_HEADERS: {} as Record<string, Record<string, string>>,
 };
 
@@ -26,6 +27,7 @@ export const updateProxyConfig = (env: Env) => {
 		VALIDATE_REFERER: env.VALIDATE_REFERER ?? false,
 		RETURN_EMPTY_PIC_WHEN_ERROR: env.RETURN_EMPTY_PIC_WHEN_ERROR ?? false,
 		MAX_CONTENT_LENGTH: env.MAX_CONTENT_LENGTH ?? 0,
+		CACHE_MAX_AGE: env.CACHE_MAX_AGE ?? 31536000,
 		EXTRA_PROXY_HEADERS: env.EXTRA_PROXY_HEADERS ? JSON.parse(env.EXTRA_PROXY_HEADERS as string || '{}') : {},
 	});
 }

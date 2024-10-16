@@ -2,6 +2,7 @@
 
 interface Env {
 	ALLOW_ORIGIN?: string;
+	CACHE_MAX_AGE?: number;
 	PROXY_USER_AGENT?: string;
 	THIRD_PARTY_CLIENTS_USER_AGENT?: string[];
 	VALIDATE_PATHNAME?: boolean;
