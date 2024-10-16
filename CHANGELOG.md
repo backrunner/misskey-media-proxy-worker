@@ -1,5 +1,10 @@
 # CHANGELOG
 
+## 0.3.2
+
+- feat: allow to set the cache max age
+- feat: support adding extra headers for specific domains
+
 ## 0.3.1
 
 - feat: expose body of proxy fetch in the error log

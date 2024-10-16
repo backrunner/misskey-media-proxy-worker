@@ -4,7 +4,8 @@
   "scripts": {
     "deploy": "wrangler deploy",
     "start": "wrangler dev",
-    "types": "wrangler types"
+    "types": "wrangler types",
+    "build": "wrangler deploy --dry-run --outdir dist"
   },
   "devDependencies": {
     "@cloudflare/workers-types": "^4.20241004.0",

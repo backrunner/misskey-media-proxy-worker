@@ -16,6 +16,7 @@ export const createErrorResponse = (status: number, errorMessage: string, reques
 				...GENERAL_CORS_HEADERS,
 				...getCorsHeader(request),
 				'Content-Type': 'applicaton/json',
+				'Cache-Control': 'no-store',
 			},
 			status,
 		}
@@ -32,6 +33,7 @@ export const createEmptyPicResponse = (request: Request, errorMessage: string) =
 				...GENERAL_CORS_HEADERS,
 				...getCorsHeader(request),
 				'Content-Type': 'image/png',
+				'Cache-Control': 'no-store',
 				'X-Error-Message': errorMessage,
 			},
 		}

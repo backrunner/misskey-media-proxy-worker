@@ -60,7 +60,7 @@ export default {
 			}
 
 			if (!isClient) {
-				if (PROXY_CONFIG.VALIDATE_REFERER && !(request.headers.get('Referer') || '').startsWith(PROXY_CONFIG.ALLOW_ORIGIN)) {
+				if (PROXY_CONFIG.VALIDATE_REFERER && PROXY_CONFIG.ALLOW_ORIGIN && !(request.headers.get('Referer') || '').startsWith(PROXY_CONFIG.ALLOW_ORIGIN)) {
 					return createErrorResponse(400, 'Invalid request.', request);
 				}
 				if (PROXY_CONFIG.VALIDATE_SIGN) {
@@ -77,7 +77,7 @@ export default {
 
 			try {
 				const parsedTargetURL = new URL(targetURL);
-				if (!targetURL.includes(PROXY_CONFIG.ALLOW_ORIGIN) && parsedTargetURL.searchParams.has('sign')) {
+				if (PROXY_CONFIG.ALLOW_ORIGIN && !targetURL.includes(PROXY_CONFIG.ALLOW_ORIGIN) && parsedTargetURL.searchParams.has('sign')) {
 					// remote target url doesn't accept sign, remove it
 					parsedTargetURL.searchParams.delete('sign');
 				}
