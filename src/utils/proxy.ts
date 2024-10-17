@@ -61,7 +61,7 @@ export const proxyImage = async (url: string, request: Request): Promise<Respons
 		}
 
 		const contentType = fetchRes.headers.get('Content-Type');
-		if (!/^(((image|video|audio)\/)|(application\/octet-stream))/.test(contentType || '')) {
+		if (!/^(((image|video|audio)\/)|(application|binary\/octet-stream))/.test(contentType || '')) {
 			return createErrorResponse(
 				415,
 				`Invalid returned content type: ${contentType}. Expected image, video, audio, or application/octet-stream.`,

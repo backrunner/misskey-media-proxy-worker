@@ -1,5 +1,9 @@
 # CHANGELOG
 
+## 0.3.3
+
+- fix: support some strange content-type headers like `binary/octet-stream`
+
 ## 0.3.2
 
 - feat: allow to set the cache max age
