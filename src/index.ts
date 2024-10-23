@@ -65,7 +65,8 @@ export default {
 				}
 				if (PROXY_CONFIG.VALIDATE_SIGN) {
 					const sign = url.searchParams.get('sign');
-					if (sign !== (await getSign(target))) {
+					const targetSign = await getSign(target);
+					if (targetSign && sign !== targetSign) {
 						return createErrorResponse(400, 'Invalid proxy request.', request);
 					}
 				}
