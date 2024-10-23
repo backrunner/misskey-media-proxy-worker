@@ -8,9 +8,14 @@ interface Env {
 	VALIDATE_PATHNAME?: boolean;
 	VALIDATE_SIGN?: boolean;
 	VALIDATE_REFERER?: boolean;
+	VALIDATE_USER_AGENT?: boolean;
 	RETURN_EMPTY_PIC_WHEN_ERROR?: boolean;
 	PROXY_KEY?: string;
 	BLACK_LIST_DOMAIN?: string[];
 	MAX_CONTENT_LENGTH?: number;
 	EXTRA_PROXY_HEADERS?: string | Record<string, Record<string, string>>;
+	CF_POLISH?: 'lossy' | 'lossless' | 'off';
+	TRANSPARENT_PROXY?: string | Record<string, string>;
+	TRANSPARENT_PROXY_MODE?: 'path' | 'query';
+	TRANSPARENT_PROXY_QUERY?: string;
 }

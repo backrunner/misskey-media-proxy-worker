@@ -41,11 +41,13 @@ export default {
 
 		const userAgent = request.headers.get('User-Agent');
 
-		if (!userAgent) {
-			return createErrorResponse(400, 'Invalid headers.', request);
+		if (PROXY_CONFIG.VALIDATE_USER_AGENT) {
+			if (!userAgent) {
+				return createErrorResponse(400, 'Invalid headers.', request);
+			}
 		}
 
-		const isClient = (PROXY_CONFIG.THIRD_PARTY_CLIENTS_USER_AGENT || []).some((id) => userAgent?.includes(id));
+		const isThirdPartyClient = (PROXY_CONFIG.THIRD_PARTY_CLIENTS_USER_AGENT || []).some((id) => userAgent?.includes(id));
 
 		try {
 			const url = new URL(request.url);
@@ -59,7 +61,8 @@ export default {
 				return createErrorResponse(400, 'Invalid proxy target.', request);
 			}
 
-			if (!isClient) {
+			// loose the validation limits for third-party clients like kimis
+			if (!isThirdPartyClient) {
 				if (PROXY_CONFIG.VALIDATE_REFERER && PROXY_CONFIG.ALLOW_ORIGIN && !(request.headers.get('Referer') || '').startsWith(PROXY_CONFIG.ALLOW_ORIGIN)) {
 					return createErrorResponse(400, 'Invalid request.', request);
 				}
@@ -92,7 +95,7 @@ export default {
 			}
 
 			try {
-				return await proxyImage(finalTargetURL, request);
+				return await proxyImage(finalTargetURL, request, ctx);
 			} catch (error) {
 				throw error;
 			}
