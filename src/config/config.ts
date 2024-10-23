@@ -27,10 +27,10 @@ export const PROXY_CONFIG: Env & {
 export const updateProxyConfig = (env: Env) => {
 	let extraProxyHeaders = {};
 	if (typeof env.EXTRA_PROXY_HEADERS === 'string') {
-	try {
-		extraProxyHeaders = env.EXTRA_PROXY_HEADERS ? JSON.parse(env.EXTRA_PROXY_HEADERS as string || '{}') : {};
-	} catch (error) {
-		console.error('Error while parsing EXTRA_PROXY_HEADERS:', error);
+		try {
+			extraProxyHeaders = env.EXTRA_PROXY_HEADERS ? JSON.parse(env.EXTRA_PROXY_HEADERS as string || '{}') : {};
+		} catch (error) {
+			console.error('Error while parsing EXTRA_PROXY_HEADERS:', error);
 		}
 	} else if (typeof env.EXTRA_PROXY_HEADERS === 'object') {
 		extraProxyHeaders = env.EXTRA_PROXY_HEADERS;
@@ -38,10 +38,10 @@ export const updateProxyConfig = (env: Env) => {
 
 	let transparentProxy = {};
 	if (typeof env.TRANSPARENT_PROXY === 'string') {
-	try {
-		transparentProxy = env.TRANSPARENT_PROXY ? JSON.parse(env.TRANSPARENT_PROXY as string || '{}') : {};
-	} catch (error) {
-		console.error('Error while parsing TRANSPARENT_PROXY:', error);
+		try {
+			transparentProxy = env.TRANSPARENT_PROXY ? JSON.parse(env.TRANSPARENT_PROXY as string || '{}') : {};
+		} catch (error) {
+			console.error('Error while parsing TRANSPARENT_PROXY:', error);
 		}
 	} else if (typeof env.TRANSPARENT_PROXY === 'object') {
 		transparentProxy = env.TRANSPARENT_PROXY;
