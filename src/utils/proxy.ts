@@ -117,7 +117,8 @@ export const proxyImage = async (url: string, request: Request, ctx: ExecutionCo
 		};
 
 		if (!shouldStripVia) {
-			responseHeaders['Via'] = via;
+			const proxyVia = fetchRes.headers.get('Via');
+			responseHeaders['Via'] = proxyVia ? `${proxyVia}, ${via}` : via;
 		}
 
 		if (request.method === 'HEAD') {
