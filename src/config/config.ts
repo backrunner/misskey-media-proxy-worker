@@ -22,6 +22,7 @@ export const PROXY_CONFIG: Env & {
 	TRANSPARENT_PROXY: {} as Record<string, string>,
 	TRANSPARENT_PROXY_MODE: 'path',
 	TRANSPARENT_PROXY_QUERY: 'url',
+	BLOCKED_VIA_PSEUDO_NAMES: [],
 };
 
 export const updateProxyConfig = (env: Env) => {
@@ -65,5 +66,6 @@ export const updateProxyConfig = (env: Env) => {
 		TRANSPARENT_PROXY: transparentProxy,
 		TRANSPARENT_PROXY_MODE: env.TRANSPARENT_PROXY_MODE ?? 'path',
 		TRANSPARENT_PROXY_QUERY: env.TRANSPARENT_PROXY_QUERY ?? 'url',
+		BLOCKED_VIA_PSEUDO_NAMES: env.BLOCKED_VIA_PSEUDO_NAMES ?? [],
 	});
 }

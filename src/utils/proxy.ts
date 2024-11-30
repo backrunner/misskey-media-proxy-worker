@@ -3,7 +3,7 @@ import { GENERAL_CORS_HEADERS } from '../constants';
 import { createErrorResponse } from './response';
 import { getExtraHeaders } from './headers';
 
-const DEFAULT_USER_AGENT = 'misskey-image-proxy-worker';
+const DEFAULT_USER_AGENT = 'misskey/image-proxy-worker';
 
 const getTransparentProxyUrl = (url: string): string => {
 	const urlObj = new URL(url);
@@ -45,6 +45,7 @@ export const proxyImage = async (url: string, request: Request, ctx: ExecutionCo
 
 	const extraHeaders = getExtraHeaders(url);
 
+	const via = `1.1 misskey/image-proxy-worker`;
 	const targetUrl = PROXY_CONFIG.TRANSPARENT_PROXY ? getTransparentProxyUrl(url) : url;
 
 	try {
@@ -63,8 +64,9 @@ export const proxyImage = async (url: string, request: Request, ctx: ExecutionCo
 			headers: {
 				'Accept-Encoding': 'gzip, deflate, br',
 				Accept: request.headers.get('Accept') || 'image/avif,image/webp,image/apng,image/svg+xml,image/*,*/*;q=0.8',
-				'User-Agent': PROXY_CONFIG.PROXY_USER_AGENT || request.headers.get('User-Agent') || DEFAULT_USER_AGENT,
-				...extraHeaders, // 添加额外的头部
+				'User-Agent': PROXY_CONFIG.PROXY_USER_AGENT || request.headers.get('User-Agent') || request.headers.get('user-agent') || DEFAULT_USER_AGENT,
+				Via: request.headers.get('Via') ? `${request.headers.get('Via')}, ${via}` : via,
+				...extraHeaders,
 			},
 			redirect: 'follow',
 		});
@@ -104,15 +106,22 @@ export const proxyImage = async (url: string, request: Request, ctx: ExecutionCo
 			);
 		}
 
+		const userAgent = request.headers.get('User-Agent') || '';
+		const shouldStripVia = PROXY_CONFIG.STRIP_VIA_FOR_USER_AGENTS?.some(agent => userAgent.includes(agent));
+
+		const responseHeaders: HeadersInit = {
+			...Object.fromEntries(fetchRes.headers.entries()),
+			...GENERAL_CORS_HEADERS,
+			'Cache-Control': `public, immutable, s-maxage=${PROXY_CONFIG.CACHE_MAX_AGE}, max-age=${PROXY_CONFIG.CACHE_MAX_AGE}, stale-while-revalidate=60`,
+			'Content-Security-Policy': `default-src 'none'; img-src 'self'; media-src 'self'; style-src 'unsafe-inline'`,
+		};
+
+		if (!shouldStripVia) {
+			responseHeaders['Via'] = via;
+		}
+
 		if (request.method === 'HEAD') {
-			return new Response(null, {
-				headers: {
-					...Object.fromEntries(fetchRes.headers.entries()),
-					...GENERAL_CORS_HEADERS,
-					'Cache-Control': 'public, immutable, s-maxage=31536000, max-age=31536000, stale-while-revalidate=60',
-					'Content-Security-Policy': `default-src 'none'; img-src 'self'; media-src 'self'; style-src 'unsafe-inline'`,
-				},
-			});
+			return new Response(null, { headers: responseHeaders });
 		}
 
 		if (!fetchRes.body) {
@@ -120,12 +129,7 @@ export const proxyImage = async (url: string, request: Request, ctx: ExecutionCo
 		}
 
 		const res = new Response(fetchRes.body as ReadableStream<Uint8Array>, {
-			headers: {
-				...Object.fromEntries(fetchRes.headers.entries()),
-				...GENERAL_CORS_HEADERS,
-				'Cache-Control': `public, immutable, s-maxage=${PROXY_CONFIG.CACHE_MAX_AGE}, max-age=${PROXY_CONFIG.CACHE_MAX_AGE}, stale-while-revalidate=60`,
-				'Content-Security-Policy': `default-src 'none'; img-src 'self'; media-src 'self'; style-src 'unsafe-inline'`,
-			},
+			headers: responseHeaders,
 		});
 
 		ctx.waitUntil(caches.default.put(request, res.clone()));

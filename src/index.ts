@@ -5,6 +5,7 @@ import { proxyImage } from './utils/proxy';
 import { createErrorResponse } from './utils/response';
 import { getSign } from './utils/sign';
 import { isNullable } from './utils/misc';
+import { validateViaHeader } from './utils/headers';
 
 const handleOptions = (request: Request) => {
 	const origin = request.headers.get('Origin');
@@ -47,6 +48,14 @@ export default {
 			}
 		}
 
+		if (userAgent?.startsWith('misskey/')) {
+			return createErrorResponse(403, 'Loop proxy is not allowed.', request);
+		}
+
+		if (!validateViaHeader(request)) {
+			return createErrorResponse(403, 'Invalid via header in the request.', request);
+		}
+
 		const isThirdPartyClient = (PROXY_CONFIG.THIRD_PARTY_CLIENTS_USER_AGENT || []).some((id) => userAgent?.includes(id));
 
 		try {
@@ -76,7 +85,7 @@ export default {
 			}
 
 			const targetURL = decodeURIComponent(target);
-			
+
 			let finalTargetURL = '';
 
 			try {

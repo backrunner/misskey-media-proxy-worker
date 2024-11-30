@@ -18,4 +18,6 @@ interface Env {
 	TRANSPARENT_PROXY?: string | Record<string, string>;
 	TRANSPARENT_PROXY_MODE?: 'path' | 'query';
 	TRANSPARENT_PROXY_QUERY?: string;
+	STRIP_VIA_FOR_USER_AGENTS?: string[];
+	BLOCKED_VIA_PSEUDO_NAMES?: string[];
 }
