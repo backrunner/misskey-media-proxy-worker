@@ -1,11 +1,39 @@
-import { PROXY_CONFIG } from '../config/config';
+import { DEFAULT_CACHE_MAX_AGE, DEFAULT_CF_POLISH, PROXY_CONFIG } from '../config/config';
 import { GENERAL_CORS_HEADERS } from '../constants';
 import { createErrorResponse } from './response';
 import { getExtraHeaders } from './headers';
 
-const DEFAULT_USER_AGENT = 'misskey-image-proxy-worker';
+const DEFAULT_USER_AGENT = 'misskey/image-proxy-worker';
 
-export const proxyImage = async (url: string, request: Request): Promise<Response> => {
+const getTransparentProxyUrl = (url: string): string => {
+	const urlObj = new URL(url);
+
+	for (const [key, value] of Object.entries(PROXY_CONFIG.TRANSPARENT_PROXY)) {
+		if (urlObj.hostname.includes(key)) {
+			let prefix = value;
+
+			if (!/^https?:\/\//i.test(prefix)) {
+				prefix = `https://${prefix}`;
+			}
+
+			if (!prefix.endsWith('/')) {
+				prefix += '/';
+			}
+
+			const targetUrl = urlObj.toString();
+
+			if (PROXY_CONFIG.TRANSPARENT_PROXY_MODE === 'path') {
+				return `${prefix}${targetUrl}`;
+			} else {
+				return `${prefix}?${PROXY_CONFIG.TRANSPARENT_PROXY_QUERY}=${encodeURIComponent(targetUrl)}`;
+			}
+		}
+	}
+
+	return url;
+};
+
+export const proxyImage = async (url: string, request: Request, ctx: ExecutionContext): Promise<Response> => {
 	if (!url) {
 		return createErrorResponse(400, 'Invalid proxy url: URL is empty or undefined.', request);
 	}
@@ -17,19 +45,28 @@ export const proxyImage = async (url: string, request: Request): Promise<Respons
 
 	const extraHeaders = getExtraHeaders(url);
 
+	const via = `1.1 misskey/image-proxy-worker`;
+	const targetUrl = PROXY_CONFIG.TRANSPARENT_PROXY ? getTransparentProxyUrl(url) : url;
+
 	try {
-		const fetchRes = await fetch(url, {
+		const fetchRes = await fetch(targetUrl, {
 			// only available when the account enabled Cloudflare Images
 			method: request.method,
 			cf: {
-				polish: 'lossy',
+				polish: PROXY_CONFIG.CF_POLISH ?? DEFAULT_CF_POLISH,
 				cacheKey: url,
+				cacheTtlByStatus: {
+					"200-299": PROXY_CONFIG.CACHE_MAX_AGE ?? DEFAULT_CACHE_MAX_AGE,
+					"400-499": 0,
+					"500-599": 0,
+				},
 			},
 			headers: {
 				'Accept-Encoding': 'gzip, deflate, br',
 				Accept: request.headers.get('Accept') || 'image/avif,image/webp,image/apng,image/svg+xml,image/*,*/*;q=0.8',
-				'User-Agent': PROXY_CONFIG.PROXY_USER_AGENT || request.headers.get('User-Agent') || DEFAULT_USER_AGENT,
-				...extraHeaders, // 添加额外的头部
+				'User-Agent': PROXY_CONFIG.PROXY_USER_AGENT || request.headers.get('User-Agent') || request.headers.get('user-agent') || DEFAULT_USER_AGENT,
+				Via: request.headers.get('Via') ? `${request.headers.get('Via')}, ${via}` : via,
+				...extraHeaders,
 			},
 			redirect: 'follow',
 		});
@@ -69,15 +106,23 @@ export const proxyImage = async (url: string, request: Request): Promise<Respons
 			);
 		}
 
+		const userAgent = request.headers.get('User-Agent') || '';
+		const shouldStripVia = PROXY_CONFIG.STRIP_VIA_FOR_USER_AGENTS?.some(agent => userAgent.includes(agent));
+
+		const responseHeaders: HeadersInit = {
+			...Object.fromEntries(fetchRes.headers.entries()),
+			...GENERAL_CORS_HEADERS,
+			'Cache-Control': `public, immutable, s-maxage=${PROXY_CONFIG.CACHE_MAX_AGE}, max-age=${PROXY_CONFIG.CACHE_MAX_AGE}, stale-while-revalidate=60`,
+			'Content-Security-Policy': `default-src 'none'; img-src 'self'; media-src 'self'; style-src 'unsafe-inline'`,
+		};
+
+		if (!shouldStripVia) {
+			const proxyVia = fetchRes.headers.get('Via');
+			responseHeaders['Via'] = proxyVia ? `${proxyVia}, ${via}` : via;
+		}
+
 		if (request.method === 'HEAD') {
-			return new Response(null, {
-				headers: {
-					...Object.fromEntries(fetchRes.headers.entries()),
-					...GENERAL_CORS_HEADERS,
-					'Cache-Control': 'public, immutable, s-maxage=31536000, max-age=31536000, stale-while-revalidate=60',
-					'Content-Security-Policy': `default-src 'none'; img-src 'self'; media-src 'self'; style-src 'unsafe-inline'`,
-				},
-			});
+			return new Response(null, { headers: responseHeaders });
 		}
 
 		if (!fetchRes.body) {
@@ -85,15 +130,10 @@ export const proxyImage = async (url: string, request: Request): Promise<Respons
 		}
 
 		const res = new Response(fetchRes.body as ReadableStream<Uint8Array>, {
-			headers: {
-				...Object.fromEntries(fetchRes.headers.entries()),
-				...GENERAL_CORS_HEADERS,
-					'Cache-Control': `public, immutable, s-maxage=${PROXY_CONFIG.CACHE_MAX_AGE}, max-age=${PROXY_CONFIG.CACHE_MAX_AGE}, stale-while-revalidate=60`,
-					'Content-Security-Policy': `default-src 'none'; img-src 'self'; media-src 'self'; style-src 'unsafe-inline'`,
-			},
+			headers: responseHeaders,
 		});
 
-		caches.default.put(request, res.clone());
+		ctx.waitUntil(caches.default.put(request, res.clone()));
 
 		return res;
 	} catch (error) {

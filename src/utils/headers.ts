@@ -40,4 +40,22 @@ export const getExtraHeaders = (targetUrl: string): Record<string, string> => {
     return {};
   }
 };
- 
+
+export const validateViaHeader = (request: Request): boolean => {
+  const viaHeader = request.headers.get('Via');
+  if (!viaHeader) return true;
+
+  const viaEntries = viaHeader.split(',').map(v => v.trim());
+
+  for (const entry of viaEntries) {
+    const match = entry.match(/^\d\.\d\s+([^(\s]+)(?:\s+\([^)]*\))?$/);
+    if (match) {
+      const pseudonym = match[1];
+      if (PROXY_CONFIG.BLOCKED_VIA_PSEUDO_NAMES?.includes(pseudonym)) {
+        return false;
+      }
+    }
+  }
+
+  return true;
+};

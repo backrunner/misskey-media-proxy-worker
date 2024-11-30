@@ -1,5 +1,14 @@
 # CHANGELOG
 
+## 0.4.0
+
+- feat: configurable user agent validation and cf polish param
+- feat: support to send the proxy request to another transparent http proxy
+- feat: add optional validation for url length
+- feat: support via headers in the proxy request and response
+- feat: loop proxy protection
+- fix: correct the wrong implementation of proxy response cache
+
 ## 0.3.3
 
 - fix: support some strange content-type headers like `binary/octet-stream`
