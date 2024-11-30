@@ -83,7 +83,16 @@ export default {
 				}
 			}
 
-			const targetURL = decodeURIComponent(target);
+			const targetURL = decodeURIComponent(target)
+
+			// validate the url length
+			if (PROXY_CONFIG.MAX_URL_LENGTH && targetURL.length > PROXY_CONFIG.MAX_URL_LENGTH) {
+				return createErrorResponse(
+					400,
+					`URL length (${targetURL.length}) exceeds the maximum allowed length (${PROXY_CONFIG.MAX_URL_LENGTH}).`,
+					request
+				);
+			}
 
 			let finalTargetURL = '';
 
