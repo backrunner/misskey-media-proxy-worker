@@ -46,10 +46,9 @@ export default {
 			if (!userAgent) {
 				return createErrorResponse(400, 'Invalid headers.', request);
 			}
-		}
-
-		if (userAgent?.startsWith('misskey/')) {
-			return createErrorResponse(403, 'Loop proxy is not allowed.', request);
+			if (userAgent?.startsWith('misskey/')) {
+				return createErrorResponse(403, 'Loop proxy is not allowed.', request);
+			}
 		}
 
 		if (!validateViaHeader(request)) {
@@ -90,6 +89,9 @@ export default {
 
 			try {
 				const parsedTargetURL = new URL(targetURL);
+				if (!['http:', 'https:'].includes(parsedTargetURL.protocol)) {
+					return createErrorResponse(400, 'Invalid URL protocol. Only HTTP and HTTPS are allowed.', request);
+				}
 				if (PROXY_CONFIG.ALLOW_ORIGIN && !targetURL.includes(PROXY_CONFIG.ALLOW_ORIGIN) && parsedTargetURL.searchParams.has('sign')) {
 					// remote target url doesn't accept sign, remove it
 					parsedTargetURL.searchParams.delete('sign');
@@ -103,13 +105,14 @@ export default {
 				return createErrorResponse(403, 'Forbidden.', request);
 			}
 
-			try {
-				return await proxyImage(finalTargetURL, request, ctx);
-			} catch (error) {
-				throw error;
-			}
+			return await proxyImage(finalTargetURL, request, ctx);
 		} catch (error) {
-			return createErrorResponse(500, (error as Error).message, request);
+			const errorMessage = error instanceof Error
+				? error.message
+				: typeof error === 'string'
+					? error
+					: 'Unknown error';
+			return createErrorResponse(500, errorMessage, request);
 		}
 	},
 };

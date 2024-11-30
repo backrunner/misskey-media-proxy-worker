@@ -7,15 +7,15 @@ const DEFAULT_USER_AGENT = 'misskey/image-proxy-worker';
 
 const getTransparentProxyUrl = (url: string): string => {
 	const urlObj = new URL(url);
-	
+
 	for (const [key, value] of Object.entries(PROXY_CONFIG.TRANSPARENT_PROXY)) {
 		if (urlObj.hostname.includes(key)) {
 			let prefix = value;
-		
+
 			if (!/^https?:\/\//i.test(prefix)) {
 				prefix = `https://${prefix}`;
 			}
-			
+
 			if (!prefix.endsWith('/')) {
 				prefix += '/';
 			}
