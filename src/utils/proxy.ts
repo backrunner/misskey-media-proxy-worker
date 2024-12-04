@@ -1,9 +1,7 @@
-import { DEFAULT_CACHE_MAX_AGE, DEFAULT_CF_POLISH, PROXY_CONFIG } from '../config/config';
+import { DEFAULT_CACHE_MAX_AGE, DEFAULT_CF_POLISH, DEFAULT_USER_AGENT, PROXY_CONFIG } from '../config/config';
 import { GENERAL_CORS_HEADERS } from '../constants';
 import { createErrorResponse } from './response';
 import { getExtraHeaders } from './headers';
-
-const DEFAULT_USER_AGENT = 'misskey/image-proxy-worker';
 
 const getTransparentProxyUrl = (url: string): string => {
 	const urlObj = new URL(url);
@@ -45,7 +43,7 @@ export const proxyImage = async (url: string, request: Request, ctx: ExecutionCo
 
 	const extraHeaders = getExtraHeaders(url);
 
-	const via = `1.1 misskey/image-proxy-worker`;
+	const via = `1.1 misskey/media-proxy-worker`;
 	const targetUrl = PROXY_CONFIG.TRANSPARENT_PROXY ? getTransparentProxyUrl(url) : url;
 
 	try {
@@ -64,7 +62,7 @@ export const proxyImage = async (url: string, request: Request, ctx: ExecutionCo
 			headers: {
 				'Accept-Encoding': 'gzip, deflate, br',
 				Accept: request.headers.get('Accept') || 'image/avif,image/webp,image/apng,image/svg+xml,image/*,*/*;q=0.8',
-				'User-Agent': PROXY_CONFIG.PROXY_USER_AGENT || request.headers.get('User-Agent') || request.headers.get('user-agent') || DEFAULT_USER_AGENT,
+				'User-Agent': PROXY_CONFIG.PASS_USER_AGENT_FROM_REQUEST ? request.headers.get('User-Agent') || PROXY_CONFIG.PROXY_USER_AGENT! : PROXY_CONFIG.PROXY_USER_AGENT!,
 				Via: request.headers.get('Via') ? `${request.headers.get('Via')}, ${via}` : via,
 				...extraHeaders,
 			},
@@ -116,6 +114,7 @@ export const proxyImage = async (url: string, request: Request, ctx: ExecutionCo
 			'Content-Security-Policy': `default-src 'none'; img-src 'self'; media-src 'self'; style-src 'unsafe-inline'`,
 		};
 
+		// if there's some clients cannot handle the `Via` header, we can strip it by configuration
 		if (!shouldStripVia) {
 			const proxyVia = fetchRes.headers.get('Via');
 			responseHeaders['Via'] = proxyVia ? `${proxyVia}, ${via}` : via;

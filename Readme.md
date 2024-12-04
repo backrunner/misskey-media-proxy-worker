@@ -7,6 +7,8 @@ A media files proxy worker for [Misskey](https://github.com/misskey-dev/misskey)
 1. Set your config items via environment variables in the ".env"
 2. Run `npm run deploy` to deploy your worker.
 
+or you can run `npm run build` to build the worker without deploying, and deploy it manually.
+
 ## Features
 
 - More secure than the official one, can reduce the abusing.
@@ -20,7 +22,7 @@ Please use the environment variable to configure the proxy, you can configure th
 ```toml
 [vars]
 ALLOW_ORIGIN = "https://pwp.space"
-PROXY_USER_AGENT = "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/119.0.0.0 Safari/537.36 Edg/119.0.2109.1"
+PROXY_USER_AGENT = ""
 THIRD_PARTY_CLIENTS_USER_AGENT = ""
 VALIDATE_PATHNAME = true
 VALIDATE_SIGN = false
@@ -28,7 +30,7 @@ VALIDATE_REFERER = false
 RETURN_EMPTY_PIC_WHEN_ERROR = false
 BLACK_LIST_DOMAIN = ""
 STRIP_VIA_FOR_USER_AGENTS = ""
-BLOCKED_VIA_PSEUDO_NAMES = ["misskey-media-proxy-worker"]
+BLOCKED_VIA_PSEUDO_NAMES = ["misskey/media-proxy-worker"]
 ```
 
 To set the `PROXY_KEY`, you can use the `wrangler secret put` command.
@@ -56,6 +58,7 @@ wrangler secret put PROXY_KEY [YOUR_PROXY_KEY]
 - `TRANSPARENT_PROXY_QUERY`: Query parameter name for transparent proxy
 - `STRIP_VIA_FOR_USER_AGENTS`: Array of User-Agent strings to strip Via header for
 - `BLOCKED_VIA_PSEUDO_NAMES`: Array of blocked Via header pseudo names
+- `PASS_USER_AGENT_FROM_REQUEST`: Whether to pass the User-Agent header from the request to the remote target
 
 ## Why proxy requests need a proxy key and signature?
 

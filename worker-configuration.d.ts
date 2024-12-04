@@ -21,4 +21,5 @@ interface Env {
 	STRIP_VIA_FOR_USER_AGENTS?: string[];
 	BLOCKED_VIA_PSEUDO_NAMES?: string[];
 	MAX_URL_LENGTH?: number;
+	PASS_USER_AGENT_FROM_REQUEST?: boolean;
 }

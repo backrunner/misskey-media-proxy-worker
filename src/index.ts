@@ -71,7 +71,7 @@ export default {
 			if (!userAgent) {
 				return createErrorResponse(400, 'Invalid headers.', request);
 			}
-			if (userAgent?.startsWith('misskey/')) {
+			if (/^(misskey|misskeymediaproxy)\//i.test(userAgent)) {
 				return createErrorResponse(403, 'Loop proxy is not allowed.', request);
 			}
 		}

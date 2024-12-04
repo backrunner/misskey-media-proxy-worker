@@ -5,7 +5,7 @@ compatibility_flags = ["nodejs_compat"]
 
 [vars]
 ALLOW_ORIGIN = ""
-PROXY_USER_AGENT = "MisskeyMediaProxy/Worker 0.4"
+PROXY_USER_AGENT = ""
 THIRD_PARTY_CLIENTS_USER_AGENT = ""
 VALIDATE_PATHNAME = false
 VALIDATE_SIGN = false
@@ -13,4 +13,4 @@ VALIDATE_REFERER = false
 RETURN_EMPTY_PIC_WHEN_ERROR = false
 BLACK_LIST_DOMAIN = ""
 STRIP_VIA_FOR_USER_AGENTS = ""
-BLOCKED_VIA_PSEUDO_NAMES = ["misskey-media-proxy-worker"]
+BLOCKED_VIA_PSEUDO_NAMES = ["misskey/media-proxy-worker"]

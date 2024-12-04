@@ -1,5 +1,7 @@
 export const DEFAULT_CACHE_MAX_AGE = 31536000;
 export const DEFAULT_CF_POLISH = 'off';
+export const DEFAULT_USER_AGENT = 'misskey/media-proxy-worker';
+export const DEFAULT_BLOCKED_VIA_PSEUDO_NAMES = ['misskey/media-proxy-worker'];
 
 export const PROXY_CONFIG: Env & {
 	EXTRA_PROXY_HEADERS: Record<string, Record<string, string>>;
@@ -24,6 +26,7 @@ export const PROXY_CONFIG: Env & {
 	TRANSPARENT_PROXY_QUERY: 'url',
 	BLOCKED_VIA_PSEUDO_NAMES: [],
 	MAX_URL_LENGTH: 0,
+	PASS_USER_AGENT_FROM_REQUEST: false,
 };
 
 export const updateProxyConfig = (env: Env) => {
@@ -52,7 +55,7 @@ export const updateProxyConfig = (env: Env) => {
 	Object.assign(PROXY_CONFIG, {
 		ALLOW_ORIGIN: env.ALLOW_ORIGIN ?? '',
 		BLACK_LIST_DOMAIN: env.BLACK_LIST_DOMAIN ?? [],
-		PROXY_USER_AGENT: env.PROXY_USER_AGENT ?? '',
+		PROXY_USER_AGENT: env.PROXY_USER_AGENT ?? DEFAULT_USER_AGENT,
 		PROXY_KEY: env.PROXY_KEY ?? '',
 		THIRD_PARTY_CLIENTS_USER_AGENT: env.THIRD_PARTY_CLIENTS_USER_AGENT ?? [],
 		VALIDATE_PATHNAME: env.VALIDATE_PATHNAME ?? true,
@@ -67,7 +70,8 @@ export const updateProxyConfig = (env: Env) => {
 		TRANSPARENT_PROXY: transparentProxy,
 		TRANSPARENT_PROXY_MODE: env.TRANSPARENT_PROXY_MODE ?? 'path',
 		TRANSPARENT_PROXY_QUERY: env.TRANSPARENT_PROXY_QUERY ?? 'url',
-		BLOCKED_VIA_PSEUDO_NAMES: env.BLOCKED_VIA_PSEUDO_NAMES ?? [],
+		BLOCKED_VIA_PSEUDO_NAMES: env.BLOCKED_VIA_PSEUDO_NAMES ?? DEFAULT_BLOCKED_VIA_PSEUDO_NAMES,
 		MAX_URL_LENGTH: env.MAX_URL_LENGTH ?? 0,
+		PASS_USER_AGENT_FROM_REQUEST: env.PASS_USER_AGENT_FROM_REQUEST ?? false,
 	});
 }
