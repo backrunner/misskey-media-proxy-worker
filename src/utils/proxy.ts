@@ -3,7 +3,7 @@ import { GENERAL_CORS_HEADERS } from '../constants';
 import { createErrorResponse } from './response';
 import { getExtraHeaders } from './headers';
 
-const DEFAULT_USER_AGENT = 'misskey/image-proxy-worker';
+const DEFAULT_USER_AGENT = 'misskey/media-proxy-worker';
 
 const getTransparentProxyUrl = (url: string): string => {
 	const urlObj = new URL(url);
@@ -45,7 +45,7 @@ export const proxyImage = async (url: string, request: Request, ctx: ExecutionCo
 
 	const extraHeaders = getExtraHeaders(url);
 
-	const via = `1.1 misskey/image-proxy-worker`;
+	const via = `1.1 misskey/media-proxy-worker`;
 	const targetUrl = PROXY_CONFIG.TRANSPARENT_PROXY ? getTransparentProxyUrl(url) : url;
 
 	try {
