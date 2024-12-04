@@ -3,6 +3,8 @@
 ## 0.4.1
 
 - feat: prevent loop proxy from official misskey media proxy
+- feat: always use the default user agent if the user agent is not set
+- feat: add a new option to force passing the user agent from the request to the remote target
 - fix: incorrect default values in the toml file
 
 ## 0.4.0
