@@ -1,5 +1,10 @@
 # CHANGELOG
 
+## 0.4.1
+
+- feat: prevent loop proxy from official misskey media proxy
+- fix: incorrect default values in the toml file
+
 ## 0.4.0
 
 - feat: configurable user agent validation and cf polish param
