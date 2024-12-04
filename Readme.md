@@ -7,6 +7,8 @@ A media files proxy worker for [Misskey](https://github.com/misskey-dev/misskey)
 1. Set your config items via environment variables in the ".env"
 2. Run `npm run deploy` to deploy your worker.
 
+or you can run `npm run build` to build the worker without deploying, and deploy it manually.
+
 ## Features
 
 - More secure than the official one, can reduce the abusing.
