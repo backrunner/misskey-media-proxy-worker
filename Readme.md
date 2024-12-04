@@ -58,6 +58,7 @@ wrangler secret put PROXY_KEY [YOUR_PROXY_KEY]
 - `TRANSPARENT_PROXY_QUERY`: Query parameter name for transparent proxy
 - `STRIP_VIA_FOR_USER_AGENTS`: Array of User-Agent strings to strip Via header for
 - `BLOCKED_VIA_PSEUDO_NAMES`: Array of blocked Via header pseudo names
+- `PASS_USER_AGENT_FROM_REQUEST`: Whether to pass the User-Agent header from the request to the remote target
 
 ## Why proxy requests need a proxy key and signature?
 

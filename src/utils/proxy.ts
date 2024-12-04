@@ -62,7 +62,7 @@ export const proxyImage = async (url: string, request: Request, ctx: ExecutionCo
 			headers: {
 				'Accept-Encoding': 'gzip, deflate, br',
 				Accept: request.headers.get('Accept') || 'image/avif,image/webp,image/apng,image/svg+xml,image/*,*/*;q=0.8',
-				'User-Agent': PROXY_CONFIG.PROXY_USER_AGENT || request.headers.get('User-Agent') || request.headers.get('user-agent') || DEFAULT_USER_AGENT,
+				'User-Agent': PROXY_CONFIG.PASS_USER_AGENT_FROM_REQUEST ? request.headers.get('User-Agent') || PROXY_CONFIG.PROXY_USER_AGENT! : PROXY_CONFIG.PROXY_USER_AGENT!,
 				Via: request.headers.get('Via') ? `${request.headers.get('Via')}, ${via}` : via,
 				...extraHeaders,
 			},
