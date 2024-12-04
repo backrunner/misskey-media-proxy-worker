@@ -20,7 +20,7 @@ Please use the environment variable to configure the proxy, you can configure th
 ```toml
 [vars]
 ALLOW_ORIGIN = "https://pwp.space"
-PROXY_USER_AGENT = "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/119.0.0.0 Safari/537.36 Edg/119.0.2109.1"
+PROXY_USER_AGENT = ""
 THIRD_PARTY_CLIENTS_USER_AGENT = ""
 VALIDATE_PATHNAME = true
 VALIDATE_SIGN = false
@@ -28,7 +28,7 @@ VALIDATE_REFERER = false
 RETURN_EMPTY_PIC_WHEN_ERROR = false
 BLACK_LIST_DOMAIN = ""
 STRIP_VIA_FOR_USER_AGENTS = ""
-BLOCKED_VIA_PSEUDO_NAMES = ["misskey-media-proxy-worker"]
+BLOCKED_VIA_PSEUDO_NAMES = ["misskey/media-proxy-worker"]
 ```
 
 To set the `PROXY_KEY`, you can use the `wrangler secret put` command.
