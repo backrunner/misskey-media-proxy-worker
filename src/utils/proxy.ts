@@ -116,6 +116,7 @@ export const proxyImage = async (url: string, request: Request, ctx: ExecutionCo
 			'Content-Security-Policy': `default-src 'none'; img-src 'self'; media-src 'self'; style-src 'unsafe-inline'`,
 		};
 
+		// if there's some clients cannot handle the `Via` header, we can strip it by configuration
 		if (!shouldStripVia) {
 			const proxyVia = fetchRes.headers.get('Via');
 			responseHeaders['Via'] = proxyVia ? `${proxyVia}, ${via}` : via;

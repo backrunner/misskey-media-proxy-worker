@@ -21,7 +21,7 @@ export const createErrorResponse = (status: number, errorMessage: string, reques
 			status,
 		}
 	);
-}
+};
 
 export const createEmptyPicResponse = (request: Request, errorMessage: string) => {
 	return new Response(
