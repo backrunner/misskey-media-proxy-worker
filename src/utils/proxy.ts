@@ -1,9 +1,7 @@
-import { DEFAULT_CACHE_MAX_AGE, DEFAULT_CF_POLISH, PROXY_CONFIG } from '../config/config';
+import { DEFAULT_CACHE_MAX_AGE, DEFAULT_CF_POLISH, DEFAULT_USER_AGENT, PROXY_CONFIG } from '../config/config';
 import { GENERAL_CORS_HEADERS } from '../constants';
 import { createErrorResponse } from './response';
 import { getExtraHeaders } from './headers';
-
-const DEFAULT_USER_AGENT = 'misskey/media-proxy-worker';
 
 const getTransparentProxyUrl = (url: string): string => {
 	const urlObj = new URL(url);
